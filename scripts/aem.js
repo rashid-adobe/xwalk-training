@@ -622,6 +622,16 @@ function decorateBlock(block) {
     blockWrapper.classList.add(`${shortBlockName}-wrapper`);
     const section = block.closest('.section');
     if (section) section.classList.add(`${shortBlockName}-container`);
+    block.querySelectorAll(':scope > div > div').forEach((cell) => {
+      if (cell.textContent.trim()) {
+        const firstChild = cell.firstElementChild;
+        if (!firstChild || ['STRONG', 'EM', 'A'].includes(firstChild.tagName)) {
+          const p = document.createElement('p');
+          p.append(...cell.childNodes);
+          cell.replaceChildren(p);
+        }
+      }
+    });
   }
 }
 
