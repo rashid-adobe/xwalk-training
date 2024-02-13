@@ -4,6 +4,8 @@ import {
   decorateIcons,
   loadBlock,
 } from './aem.js';
+// eslint-disable-next-line import/no-unresolved
+import { decorateRichtext } from './editor-support-rte.js';
 
 const connectionPrefix = 'urn:aemconnection:';
 
@@ -47,6 +49,7 @@ async function handleEditorUpdate(event) {
         // decorate buttons and icons
         decorateButtons(parentElement);
         decorateIcons(parentElement);
+        decorateRichtext(parentElement);
         return;
       }
     }
