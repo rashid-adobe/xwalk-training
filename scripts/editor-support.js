@@ -59,4 +59,3 @@ async function handleEditorUpdate(event) {
 }
 
 document.querySelector('main')?.addEventListener('aue:content-patch', handleEditorUpdate);
-document.querySelector('main')?.addEventListener('aue:content-update', handleEditorUpdate);
