@@ -626,7 +626,7 @@ function decorateBlock(block) {
     block.querySelectorAll(':scope > div > div').forEach((cell) => {
       const firstChild = cell.firstElementChild;
       if ((!firstChild && cell.textContent.trim())
-        || (firstChild && ['STRONG', 'EM', 'A', 'PICTURE'].includes(firstChild.tagName))) {
+        || (firstChild && ['SPAN', 'STRONG', 'EM', 'A', 'PICTURE'].includes(firstChild.tagName))) {
         const p = document.createElement('p');
         p.append(...cell.childNodes);
         cell.replaceChildren(p);
