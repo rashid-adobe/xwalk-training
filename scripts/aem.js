@@ -625,7 +625,8 @@ function decorateBlock(block) {
     // wrap plain text and inline elements in a <p>
     block.querySelectorAll(':scope > div > div').forEach((cell) => {
       const firstChild = cell.firstElementChild;
-      if (!firstChild || ['STRONG', 'EM', 'A', 'PICTURE'].includes(firstChild.tagName)) {
+      if ((!firstChild && cell.textContent.trim())
+        || (firstChild && ['STRONG', 'EM', 'A', 'PICTURE'].includes(firstChild.tagName))) {
         const p = document.createElement('p');
         p.append(...cell.childNodes);
         cell.replaceChildren(p);
