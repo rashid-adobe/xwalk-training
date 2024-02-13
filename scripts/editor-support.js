@@ -16,14 +16,15 @@ async function handleEditorUpdate(event) {
   if (!updates.length) return;
   const { content } = updates[0];
 
+  const parsedUpdate = new DOMParser().parseFromString(content, 'text/html');
   const element = document.querySelector(`[data-aue-resource="${resource}"]`);
-  if (element) {
+  // proceed only if the updated element exists and is not a section
+  if (element && !element.matches('.section')) {
     const block = element.parentElement?.closest('.block') || element?.closest('.block');
     if (block) {
       const blockResource = block.getAttribute('data-aue-resource');
       if (!blockResource || !blockResource.startsWith(connectionPrefix)) return;
-      const newBlockDocument = new DOMParser().parseFromString(content, 'text/html');
-      const newBlock = newBlockDocument?.querySelector(`[data-aue-resource="${blockResource}"]`);
+      const newBlock = parsedUpdate.querySelector(`[data-aue-resource="${blockResource}"]`);
       if (newBlock) {
         newBlock.style.display = 'none';
         block.insertAdjacentElement('afterend', newBlock);
@@ -36,24 +37,22 @@ async function handleEditorUpdate(event) {
         // remove the old block and show the new one
         block.remove();
         newBlock.style.display = null;
+        return;
       }
-
-      return;
-    }
-
-    const updatedSection = new DOMParser().parseFromString(content, 'text/html');
-    const newElement = updatedSection?.querySelector(`[data-aue-resource="${resource}"]`);
-    if (newElement) {
-      newElement.style.display = 'none';
-      element.insertAdjacentElement('afterend', newElement);
-      // decorate buttons and icons
-      decorateButtons(newElement);
-      decorateIcons(newElement);
-      // remove the old element and show the new one
-      element.remove();
-      newElement.style.display = null;
+    } else {
+      const newElements = parsedUpdate.querySelectorAll(`[data-aue-resource="${resource}"],[data-richtext-resource="${resource}"]`);
+      if (newElements.length) {
+        const { parentElement } = element;
+        element.replaceWith(...newElements);
+        // decorate buttons and icons
+        decorateButtons(parentElement);
+        decorateIcons(parentElement);
+        return;
+      }
     }
   }
+
+  window.location.reload();
 }
 
 document.querySelector('main')?.addEventListener('aue:content-patch', handleEditorUpdate);
