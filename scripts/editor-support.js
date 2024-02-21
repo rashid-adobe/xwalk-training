@@ -10,6 +10,7 @@ import { decorateRichtext } from './editor-support-rte.js';
 const connectionPrefix = 'urn:aemconnection:';
 
 async function handleEditorUpdate(event) {
+  // redecorate default content and blocks on patches (in the properties rail)
   const { detail } = event;
 
   const resource = detail?.request?.target?.resource;
@@ -59,3 +60,4 @@ async function handleEditorUpdate(event) {
 }
 
 document.querySelector('main')?.addEventListener('aue:content-patch', handleEditorUpdate);
+document.querySelector('main')?.addEventListener('aue:content-update', handleEditorUpdate);
