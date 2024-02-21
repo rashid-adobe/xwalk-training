@@ -11,8 +11,6 @@ import {
 import { decorateRichtext } from './editor-support-rte.js';
 import { decorateMain } from './scripts.js';
 
-const connectionPrefix = 'urn:aemconnection:';
-
 async function applyChanges(event) {
   // redecorate default content and blocks on patches (in the properties rail)
   const { detail } = event;
@@ -44,10 +42,9 @@ async function applyChanges(event) {
       return true;
     }
 
-    const block = element.parentElement?.closest('.block') || element?.closest('.block');
+    const block = element.parentElement?.closest('.block[data-aue-resource]') || element?.closest('.block[data-aue-resource]');
     if (block) {
       const blockResource = block.getAttribute('data-aue-resource');
-      if (!blockResource || !blockResource.startsWith(connectionPrefix)) return false;
       const newBlock = parsedUpdate.querySelector(`[data-aue-resource="${blockResource}"]`);
       if (newBlock) {
         newBlock.style.display = 'none';
@@ -97,6 +94,7 @@ function attachEventListners(main) {
     'aue:content-update',
     'aue:content-add',
     'aue:content-move',
+    'aue:content-remove',
   ].forEach((eventType) => main?.addEventListener(eventType, async (event) => {
     event.stopPropagation();
     const applied = await applyChanges(event);
