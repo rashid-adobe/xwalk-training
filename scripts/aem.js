@@ -633,7 +633,9 @@ function decorateBlock(block) {
         [...cell.attributes]
           // move the instrumentation from the cell to the new paragraph, also keep the class
           // in case the content is a buttton and the cell the button-container
-          .filter(({ nodeName }) => nodeName === 'class' || nodeName.startsWith('data-aue'))
+          .filter(({ nodeName }) => nodeName === 'class'
+            || nodeName.startsWith('data-aue')
+            || nodeName.startsWith('data-richtext'))
           .forEach(({ nodeName, nodeValue }) => {
             paragraph.setAttribute(nodeName, nodeValue);
             cell.removeAttribute(nodeName);
