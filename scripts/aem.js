@@ -630,10 +630,20 @@ function decorateBlock(block) {
         || (firstChild && !firstChild.tagName.match(/^(P(RE)?|H[1-6]|(U|O)L|TABLE)$/))) {
         const tag = firstChild && firstChild.tagName === 'CODE' && cellText === firstChild.textContent.trim() ? 'pre' : 'p';
         const paragraph = document.createElement(tag);
+        [...cell.attributes]
+          // move the instrumentation from the cell to the new paragraph, also keep the class
+          // in case the content is a buttton and the cell the button-container
+          .filter(({ nodeName }) => nodeName === 'class' || nodeName.startsWith('data-aue'))
+          .forEach(({ nodeName, nodeValue }) => {
+            paragraph.setAttribute(nodeName, nodeValue);
+            cell.removeAttribute(nodeName);
+          });
         paragraph.append(...cell.childNodes);
         cell.replaceChildren(paragraph);
       }
     });
+    // eslint-disable-next-line no-use-before-define
+    decorateButtons(block);
   }
 }
 
