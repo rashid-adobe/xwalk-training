@@ -31,6 +31,7 @@ export function decorateRichtext(container = document) {
         siblings.push(sibling);
       } else break;
     }
+
     let orphanElements;
     if (richtextResource && richtextProp) {
       orphanElements = document.querySelectorAll(`[data-richtext-id="${richtextResource}"][data-richtext-prop="${richtextProp}"]`);
