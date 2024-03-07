@@ -51,6 +51,20 @@
               }
             }
           }
+        },
+        {
+          "title": "Adaptive Form - Embed",
+          "id": "embedform",
+          "plugins": {
+            "xwalk": {
+              "page": {
+                "resourceType": "core/franklin/components/embedform/v1/embedform",
+                "template": {
+                  "formPath": ""
+                }
+              }
+            }
+          }
         }
       ]
     },

@@ -185,5 +185,17 @@
         "valueType": "string"
       }
     ]
+  },
+  {
+    "id": "embedform",
+    "fields": [
+      {
+        "component": "text-input",
+        "valueType": "string",
+        "name": "formPath",
+        "value": "",
+        "label": "Form Path"
+      }
+    ]
   }
 ]
