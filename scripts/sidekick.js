@@ -4,30 +4,32 @@ async function getContentSourceUrl(owner, repo, ref) {
     return null;
   }
   const env = await res.json();
-  if (!env) {
-    return null;
-  }
-  return env.contentSourceUrl;
+  return env?.contentSourceUrl;
 }
-async function openAemEditor(event) {
+async function openWithUniversalEditor(event) {
   const { owner, repo, ref } = event.detail.data.config;
   const contentSourceUrl = await getContentSourceUrl(owner, repo, ref);
+  if (!contentSourceUrl) {
+    // eslint-disable-next-line no-console
+    console.error('Content source URL not found');
+    return;
+  }
   const path = window.location.pathname;
   const editorUrl = `${contentSourceUrl}${path}?cmd=open`;
   // open the editor in a new tab
   window.open(editorUrl, '_blank');
 }
 
-function getButton(sk, selector) {
-  let btn = sk.shadowRoot.querySelector(selector);
-  if (btn) {
-    return btn;
+function getElement(sk, selector) {
+  let elt = sk.shadowRoot.querySelector(selector);
+  if (elt) {
+    return elt;
   }
   return new Promise((resolve) => {
     const check = () => {
-      btn = sk.shadowRoot.querySelector(selector);
-      if (btn) {
-        resolve(btn);
+      elt = sk.shadowRoot.querySelector(selector);
+      if (elt) {
+        resolve(elt);
       } else {
         setTimeout(check, 100);
       }
@@ -36,27 +38,33 @@ function getButton(sk, selector) {
   });
 }
 
-async function overrideEditButton(sk) {
-  const oldEditBtn = await getButton(sk, '.edit.plugin');
-  const newEditBtn = await getButton(sk, '.aemedit.plugin');
-  oldEditBtn.replaceWith(newEditBtn);
-  // hack to remove the original edit button that is generated again in the DOM
-  const oldEditBtn1 = await getButton(sk, '.edit.plugin');
-  oldEditBtn1.remove();
-  sk.addEventListener('custom:aemedit', openAemEditor);
+async function customizeButtons(sk) {
+  // hide the default buttons
+  const container = await getElement(sk, '.plugin-container');
+  container.style.visibility = 'hidden';
+  for (let i = 0; i < ['edit', 'reload', 'publish', 'delete', 'unpublish'].length; i += 1) {
+    const action = ['edit', 'reload', 'publish', 'delete', 'unpublish'][i];
+    // eslint-disable-next-line no-await-in-loop
+    const btn = await getElement(sk, `.${action}.plugin`);
+    btn.style.display = 'none';
+  }
+  container.style.visibility = 'visible';
+
+  // initialize the custom edit button
+  sk.addEventListener('custom:aemedit', openWithUniversalEditor);
 }
 
 // eslint-disable-next-line import/prefer-default-export
-export function initSidekick() {
+export async function initSidekick() {
   let sk = document.querySelector('helix-sidekick');
   if (sk) {
     // sidekick already loaded
-    overrideEditButton(sk);
+    await customizeButtons(sk);
   } else {
     // wait for sidekick to be loaded
-    document.addEventListener('sidekick-ready', () => {
+    document.addEventListener('sidekick-ready', async () => {
       sk = document.querySelector('helix-sidekick');
-      overrideEditButton(sk);
+      await customizeButtons(sk);
     }, { once: true });
   }
 }
