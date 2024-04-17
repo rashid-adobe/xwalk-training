@@ -14,17 +14,14 @@ async function openWithUniversalEditor(event) {
     console.error('Content source URL not found');
     return;
   }
-  const path = window.location.pathname;
-  const editorUrl = `${contentSourceUrl}${path}?cmd=open`;
+  const { pathname } = window.location;
+  const editorUrl = `${contentSourceUrl}${pathname}?cmd=open`;
   // open the editor in a new tab
   window.open(editorUrl, '_blank');
 }
 
-function getElement(sk, selector) {
+async function getElement(sk, selector) {
   let elt = sk.shadowRoot.querySelector(selector);
-  if (elt) {
-    return elt;
-  }
   return new Promise((resolve) => {
     const check = () => {
       elt = sk.shadowRoot.querySelector(selector);
