@@ -1,6 +1,6 @@
 {
   "mappings": [
-    "/content/aem-boilerplate/:/",
-    "/content/aem-boilerplate/configuration:/.helix/config.json"
+    "/content/rashid-xwalk/:/",
+    "/content/rashid-xwalk/configuration:/.helix/config.json"
   ]
 }
